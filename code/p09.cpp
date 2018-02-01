@@ -8,6 +8,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <cmath>
+
 constexpr unsigned int wndWidth{800}, wndHeight{600};
 
 struct Rectangle

@@ -8,6 +8,7 @@
 // * Win/lose states (limited lives)
 // * Multi-hit bricks
 
+#include <cmath>
 #include <memory>
 #include <typeinfo>
 #include <map>

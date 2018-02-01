@@ -9,6 +9,8 @@
 // a polymorphic hierarchy for our objects, and a manager class
 // that will help us deal with them.
 
+#include <cmath>
+
 // Let's include the `<memory>` header, as we're going to use
 // smart pointers.
 #include <memory>

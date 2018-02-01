@@ -7,6 +7,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <cmath>
+
 constexpr unsigned int wndWidth{800}, wndHeight{600};
 
 // First of all, we have trivial code repetition for our "simple
