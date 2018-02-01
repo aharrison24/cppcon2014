@@ -333,13 +333,13 @@ public:
         textState.setFont(liberationSans);
         textState.setPosition(10, 10);
         textState.setCharacterSize(35.f);
-        textState.setColor(sf::Color::White);
+        textState.setFillColor(sf::Color::White);
         textState.setString("Paused");
 
         textLives.setFont(liberationSans);
         textLives.setPosition(10, 10);
         textLives.setCharacterSize(15.f);
-        textLives.setColor(sf::Color::White);
+        textLives.setFillColor(sf::Color::White);
     }
 
     void restart()
