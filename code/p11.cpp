@@ -328,7 +328,7 @@ public:
         // We need to load a font from file before using
         // our text objects.
         liberationSans.loadFromFile(
-            R"(/usr/share/fonts/TTF/LiberationSans-Regular.ttf)");
+            R"(LiberationSans-Regular.ttf)");
 
         textState.setFont(liberationSans);
         textState.setPosition(10, 10);
