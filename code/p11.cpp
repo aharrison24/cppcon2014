@@ -368,27 +368,33 @@ public:
 
     void run()
     {
-        while(true)
+        while(window.isOpen())
         {
-            window.clear(sf::Color::Black);
-
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) break;
-
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P))
+            // Process key and window events
+            sf::Event event;
+            while (window.pollEvent(event))
             {
-                if(!pausePressedLastFrame)
-                {
-                    if(state == State::Paused)
-                        state = State::InProgress;
-                    else if(state == State::InProgress)
-                        state = State::Paused;
-                }
-                pausePressedLastFrame = true;
-            }
-            else
-                pausePressedLastFrame = false;
+                if (event.type == sf::Event::Closed) window.close();
 
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) restart();
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == sf::Keyboard::Escape) window.close();
+
+                    if (event.key.code == sf::Keyboard::Key::P && !pausePressedLastFrame)
+                    {
+                        if(state == State::Paused)
+                            state = State::InProgress;
+                        else if(state == State::InProgress)
+                            state = State::Paused;
+                    }
+
+                    if (event.key.code == sf::Keyboard::Key::R) restart();
+                }
+            }
+
+            pausePressedLastFrame = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P);
+
+            window.clear(sf::Color::Black);
 
             // If the game is not in progress, do not draw or update
             // game elements and display information to the player.
