@@ -1,0 +1,11 @@
+foreach(num RANGE 1 11)
+    if (${num} GREATER 9)
+        set(name "p${num}")
+    else()
+        set(name "p0${num}")
+    endif()
+
+    add_executable(${name} ${name}.cpp)
+    target_include_directories(${name} PRIVATE "${SFML_INCLUDE_DIR}")
+    target_link_libraries(${name} PRIVATE "${SFML_LIBRARIES}")
+endforeach()
