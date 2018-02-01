@@ -237,34 +237,43 @@ public:
     // The `run` method will start the game loop.
     void run()
     {
-        while(true)
+        while(window.isOpen())
         {
-            window.clear(sf::Color::Black);
-
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) break;
-
-            // The `P` key will toggle the pause. To prevent continuous
-            // use of the pause button, we need to check if the input
-            // was pressed last frame.
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P))
+            sf::Event event;
+            while (window.pollEvent(event))
             {
-                // If `P` was not pressed last frame, we can toggle
-                // the state.
-                if(!pausePressedLastFrame)
+                // Close window if close button was clicked
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::KeyPressed)
                 {
-                    if(state == State::Paused)
-                        state = State::InProgress;
-                    else if(state == State::InProgress)
-                        state = State::Paused;
+                    // Close window if "Escape" key was pressed
+                    if (event.key.code == sf::Keyboard::Escape)
+                        window.close();
+
+                    // The `P` key will toggle the pause. To prevent continuous
+                    // use of the pause button, we need to check if the input
+                    // was pressed last frame.
+                    if (event.key.code == sf::Keyboard::Key::P && !pausePressedLastFrame)
+                    {
+                        if(state == State::Paused)
+                            state = State::InProgress;
+                        else if(state == State::InProgress)
+                            state = State::Paused;
+                    }
+
+                    // Let's also use the `R` key to restart the game.
+                    if (event.key.code == sf::Keyboard::Key::R)
+                        restart();
                 }
 
-                pausePressedLastFrame = true;
             }
-            else
-                pausePressedLastFrame = false;
 
-            // Let's also use the `R` key to restart the game.
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) restart();
+            // Store current state of `P` key for use next frame.
+            pausePressedLastFrame = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P);
+
+            window.clear(sf::Color::Black);
 
             // If the game is paused, we'll only draw game elements,
             // without updating them.
