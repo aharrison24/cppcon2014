@@ -109,6 +109,9 @@ struct Rectangle
     float right() const noexcept { return x() + width() / 2.f; }
     float top() const noexcept { return y() - height() / 2.f; }
     float bottom() const noexcept { return y() + height() / 2.f; }
+
+protected:
+    ~Rectangle() = default;
 };
 
 struct Circle
@@ -122,6 +125,9 @@ struct Circle
     float right() const noexcept { return x() + radius(); }
     float top() const noexcept { return y() - radius(); }
     float bottom() const noexcept { return y() + radius(); }
+
+protected:
+    ~Circle() = default;
 };
 
 class Ball : public Entity, public Circle
