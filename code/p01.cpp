@@ -35,17 +35,26 @@ int main()
     // This is where the "game loop" comes into play.
     // {Info: game loop}
 
-    while(true)
+    while(window.isOpen())
     {
+        // Process events that are received by the window
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            // If the player presses the "Escape" key or clicks the window's
+            // close button then we close the window. The loop will exit at
+            // the end of the current frame.
+            if (event.type == sf::Event::Closed)
+              window.close();
+
+            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+              window.close();
+        }
+
         // Every iteration of this loop is a "frame" of our game.
         // We'll begin our frame by clearing the window from previously
         // drawn graphics.
         window.clear(sf::Color::Black);
-
-        // Then we'll check the input state. In this case, if the
-        // player presses the "Escape" key, we'll jump outside of the
-        // loop, destroying the window and terminating the program.
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) break;
 
         // Show the window's contents.
         window.display();
