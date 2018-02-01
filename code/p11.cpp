@@ -19,11 +19,10 @@ constexpr unsigned int wndWidth{800}, wndHeight{600};
 class Entity
 {
 public:
-    bool destroyed{false};
-
     virtual ~Entity() = default;
     virtual void update() = 0;
     virtual void draw(sf::RenderWindow& mTarget) const = 0;
+    virtual bool isDestroyed() const = 0;
 };
 
 class Manager
@@ -56,7 +55,7 @@ public:
             vector.erase(std::remove_if(std::begin(vector), std::end(vector),
                              [](auto mPtr)
                              {
-                                 return mPtr->destroyed;
+                                 return mPtr->isDestroyed();
                              }),
                 std::end(vector));
         }
@@ -64,7 +63,7 @@ public:
         entities.erase(std::remove_if(std::begin(entities), std::end(entities),
                            [](const auto& mUPtr)
                            {
-                               return mUPtr->destroyed;
+                               return mUPtr->isDestroyed();
                            }),
             std::end(entities));
     }
@@ -136,6 +135,7 @@ public:
     static const sf::Color defColor;
     static constexpr float defRadius{10.f}, defVelocity{8.f};
 
+    bool destroyed{false};
     sf::Vector2f velocity{-defVelocity, -defVelocity};
 
     Ball(float mX, float mY)
@@ -153,6 +153,8 @@ public:
     }
 
     void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
+
+    bool isDestroyed() const override { return destroyed; }
 
 private:
     void solveBoundCollisions() noexcept
@@ -182,6 +184,7 @@ public:
     static constexpr float defWidth{60.f}, defHeight{20.f};
     static constexpr float defVelocity{8.f};
 
+    bool destroyed{false};
     sf::Vector2f velocity;
 
     Paddle(float mX, float mY)
@@ -200,6 +203,7 @@ public:
 
     void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
 
+    bool isDestroyed() const override { return destroyed; }
 private:
     void processPlayerInput()
     {
@@ -224,6 +228,8 @@ public:
     static constexpr float defWidth{60.f}, defHeight{20.f};
     static constexpr float defVelocity{8.f};
 
+    bool destroyed{false};
+
     // Let's add a field for the required hits.
     int requiredHits{1};
 
@@ -246,6 +252,8 @@ public:
             shape.setFillColor(defColorHits3);
     }
     void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
+
+    bool isDestroyed() const override { return destroyed; }
 };
 
 const sf::Color Brick::defColorHits1{255, 255, 0, 80};
