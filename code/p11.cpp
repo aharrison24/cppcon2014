@@ -23,7 +23,7 @@ public:
 
     virtual ~Entity() {}
     virtual void update() {}
-    virtual void draw(sf::RenderWindow& mTarget) {}
+    virtual void draw(sf::RenderWindow& mTarget) const {}
 };
 
 class Manager
@@ -146,7 +146,7 @@ public:
         solveBoundCollisions();
     }
 
-    void draw(sf::RenderWindow& mTarget) override { mTarget.draw(shape); }
+    void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
 
 private:
     void solveBoundCollisions() noexcept
@@ -192,7 +192,7 @@ public:
         shape.move(velocity);
     }
 
-    void draw(sf::RenderWindow& mTarget) override { mTarget.draw(shape); }
+    void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
 
 private:
     void processPlayerInput()
@@ -239,7 +239,7 @@ public:
         else
             shape.setFillColor(defColorHits3);
     }
-    void draw(sf::RenderWindow& mTarget) override { mTarget.draw(shape); }
+    void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
 };
 
 const sf::Color Brick::defColorHits1{255, 255, 0, 80};
