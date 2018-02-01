@@ -21,9 +21,9 @@ class Entity
 public:
     bool destroyed{false};
 
-    virtual ~Entity() {}
-    virtual void update() {}
-    virtual void draw(sf::RenderWindow& mTarget) const {}
+    virtual ~Entity() = default;
+    virtual void update() = 0;
+    virtual void draw(sf::RenderWindow& mTarget) const = 0;
 };
 
 class Manager
