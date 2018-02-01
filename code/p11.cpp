@@ -16,34 +16,56 @@
 
 constexpr unsigned int wndWidth{800}, wndHeight{600};
 
-class Entity
-{
-public:
-    virtual ~Entity() = default;
-    virtual void update() = 0;
-    virtual void draw(sf::RenderWindow& mTarget) const = 0;
-    virtual bool isDestroyed() const = 0;
-};
-
 class Manager
 {
+    class EntityConcept
+    {
+    public:
+        virtual ~EntityConcept() = default;
+        virtual void update() = 0;
+        virtual void draw(sf::RenderWindow& mTarget) const = 0;
+        virtual bool isDestroyed() const = 0;
+    };
+
+    template <class T>
+    struct EntityModel : EntityConcept
+    {
+    public:
+        template <class... TArgs>
+        explicit EntityModel(TArgs&&... args)
+            : entity(std::forward<TArgs>(args)...)
+        {
+        }
+
+        void update() override { entity.update(); }
+
+        void draw(sf::RenderWindow& mTarget) const override
+        {
+            entity.draw(mTarget);
+        }
+
+        bool isDestroyed() const override
+        {
+            return entity.isDestroyed();
+        }
+
+        T entity;
+    };
+
 private:
-    std::vector<std::unique_ptr<Entity>> entities;
-    std::map<std::size_t, std::vector<Entity*>> groupedEntities;
+    std::vector<std::unique_ptr<EntityConcept>> entities;
+    std::map<std::size_t, std::vector<EntityConcept*>> groupedEntities;
 
 public:
     template <typename T, typename... TArgs>
     T& create(TArgs&&... mArgs)
     {
-        static_assert(std::is_base_of<Entity, T>::value,
-            "`T` must be derived from `Entity`");
-
-        auto uPtr(std::make_unique<T>(std::forward<TArgs>(mArgs)...));
+        auto uPtr(std::make_unique<EntityModel<T>>(std::forward<TArgs>(mArgs)...));
         auto ptr(uPtr.get());
-        groupedEntities[typeid(T).hash_code()].emplace_back(ptr);
-        entities.emplace_back(std::move(uPtr));
+        groupedEntities[typeid(T).hash_code()].push_back(ptr);
+        entities.push_back(std::move(uPtr));
 
-        return *ptr;
+        return ptr->entity;
     }
 
     void refresh()
@@ -83,7 +105,7 @@ public:
     template <typename T, typename TFunc>
     void forEach(const TFunc& mFunc)
     {
-        for(auto ptr : getAll<T>()) mFunc(*dynamic_cast<T*>(ptr));
+        for(auto ptr : getAll<T>()) mFunc(dynamic_cast<EntityModel<T>*>(ptr)->entity);
     }
 
     void update()
@@ -129,7 +151,7 @@ protected:
     ~Circle() = default;
 };
 
-class Ball : public Entity, public Circle
+class Ball : public Circle
 {
 public:
     static const sf::Color defColor;
@@ -146,15 +168,15 @@ public:
         shape.setOrigin(defRadius, defRadius);
     }
 
-    void update() override
+    void update()
     {
         shape.move(velocity);
         solveBoundCollisions();
     }
 
-    void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
+    void draw(sf::RenderWindow& mTarget) const { mTarget.draw(shape); }
 
-    bool isDestroyed() const override { return destroyed; }
+    bool isDestroyed() const { return destroyed; }
 
 private:
     void solveBoundCollisions() noexcept
@@ -177,7 +199,7 @@ private:
 
 const sf::Color Ball::defColor{sf::Color::Red};
 
-class Paddle : public Entity, public Rectangle
+class Paddle : public Rectangle
 {
 public:
     static const sf::Color defColor;
@@ -195,15 +217,15 @@ public:
         shape.setOrigin(defWidth / 2.f, defHeight / 2.f);
     }
 
-    void update() override
+    void update()
     {
         processPlayerInput();
         shape.move(velocity);
     }
 
-    void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
+    void draw(sf::RenderWindow& mTarget) const { mTarget.draw(shape); }
 
-    bool isDestroyed() const override { return destroyed; }
+    bool isDestroyed() const { return destroyed; }
 private:
     void processPlayerInput()
     {
@@ -219,7 +241,7 @@ private:
 
 const sf::Color Paddle::defColor{sf::Color::Red};
 
-class Brick : public Entity, public Rectangle
+class Brick : public Rectangle
 {
 public:
     static const sf::Color defColorHits1;
@@ -240,7 +262,7 @@ public:
         shape.setOrigin(defWidth / 2.f, defHeight / 2.f);
     }
 
-    void update() override
+    void update()
     {
         // Let's alter the color of the brick depending on the
         // required hits.
@@ -251,9 +273,9 @@ public:
         else
             shape.setFillColor(defColorHits3);
     }
-    void draw(sf::RenderWindow& mTarget) const override { mTarget.draw(shape); }
+    void draw(sf::RenderWindow& mTarget) const { mTarget.draw(shape); }
 
-    bool isDestroyed() const override { return destroyed; }
+    bool isDestroyed() const { return destroyed; }
 };
 
 const sf::Color Brick::defColorHits1{255, 255, 0, 80};
