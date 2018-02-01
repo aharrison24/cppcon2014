@@ -84,7 +84,7 @@ public:
     template <typename T, typename TFunc>
     void forEach(const TFunc& mFunc)
     {
-        for(auto ptr : getAll<T>()) mFunc(*reinterpret_cast<T*>(ptr));
+        for(auto ptr : getAll<T>()) mFunc(*dynamic_cast<T*>(ptr));
     }
 
     void update()
